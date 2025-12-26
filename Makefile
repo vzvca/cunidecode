@@ -1,4 +1,6 @@
+CFLAGS+=-I tables
 
+VPATH=.:tables
 
 example: cudec.o example.o
 	$(CC) -o $@ cudec.o example.o
