@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 
 #include "x000.c"
@@ -193,9 +194,9 @@
 #include "x1f1.c"
 #include "x1f6.c"
 
-char **data[0x01f7];
+static char **data[0x01f7];
 
-void init_data()
+void cudec_init()
 {
   data[0x0000] = data_x000;
   data[0x0001] = data_x001;
@@ -391,7 +392,7 @@ void init_data()
 
 
 // give replacement for codepoint
-static char *replcp (int cp)
+char *cudec_replcp (int cp)
 {
   int section, position;
   
@@ -415,7 +416,7 @@ static char *replcp (int cp)
 
 // return codepoint corresponding to utf8 char at c
 // advance c depending on number of bytes in utf8 char
-int utf8tocp (char **c)
+int cudec_utf8tocp (char **c)
 {
   char *s = *c;
   int r = 0;
@@ -441,71 +442,21 @@ int utf8tocp (char **c)
     *c = s+4;
   }
   else {
-    // erreur encodage UTF-8
-    assert (666 == 0);
+    // erreur encodage UTF-8 - just advance one char
+    r = s[0];
+    *c = s + 1;
   }
   
   return r;
 }
 
-int main()
+char *cudec_xlat (char *s, char *d)
 {
-  init_data();
-
-  {
-    char *s = "Κνωσός";
-    printf ("%s = ", s);
-    while (*s) {
-      int cp = utf8tocp (&s);
-      printf ("%s", replcp (cp));
-    }
-    printf("\n");
+  char *p = d;
+  int cp;
+  while (*s) {
+    cp = cudec_utf8tocp (&s);
+    p = stpcpy (p, cudec_replcp (cp));
   }
-  {
-    char *s = "\u5317\u4EAC";
-    printf ("%s = ", s);
-    while (*s) {
-      int cp = utf8tocp (&s);
-      printf ("%s", replcp (cp));
-    }
-    printf("\n");
-  }  
-  {
-    char *s = "kožušček";
-    printf ("%s = ", s);
-    while (*s) {
-      int cp = utf8tocp (&s);
-      printf ("%s", replcp (cp));
-    }
-    printf("\n");
-  }  
-  {
-    char *s = "30 \U0001d5c4\U0001d5c6/\U0001d5c1";
-    printf ("%s = ", s);
-    while (*s) {
-      int cp = utf8tocp (&s);
-      printf ("%s", replcp (cp));
-    }
-    printf("\n");
-  }
-  {
-    char *s = "Привет, как дела?";
-    printf ("%s = ", s);
-    while (*s) {
-      int cp = utf8tocp (&s);
-      printf ("%s", replcp (cp));
-    }
-    printf("\n");
-  }
-  {
-    char *s = "Καλή μέρα! Πώς σε λένε";
-    printf ("%s = ", s);
-    while (*s) {
-      int cp = utf8tocp (&s);
-      printf ("%s", replcp (cp));
-    }
-    printf("\n");
-  }
-  
-  return 0;
+  return d;
 }
