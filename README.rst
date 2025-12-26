@@ -1,6 +1,28 @@
 Unidecode, lossy ASCII transliterations of Unicode text
 =======================================================
 
+This program is C port of unidecode python library found at https://github.com/avian2/unidecode
+
+To compile it run make, it will produce ```example``` which shows how to use function in ```cudec.h```.
+
+Output is::
+
+    user@pc$ ./example 
+    Κνωσός => Knosos
+    北京 => Bei Jing 
+    kožušček => kozuscek
+    30 𝗄𝗆/𝗁 => 30 km/h
+    Привет, как дела? => Privet, kak dela?
+    Καλή μέρα! Πώς σε λένε => Kale mera! Pos se lene
+    Bûche à Noël au balcon, Pâques aux tisons. => Buche a Noel au balcon, Paques aux tisons.
+
+
+The original README follows :
+
+Unidecode, lossy ASCII transliterations of Unicode text
+=======================================================
+
+
 It often happens that you have text data in Unicode, but you need to
 represent it in ASCII. For example when integrating with legacy code that
 doesn't support Unicode, or for ease of entry of non-Roman names on a US
